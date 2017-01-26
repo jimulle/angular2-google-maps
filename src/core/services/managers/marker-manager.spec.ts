@@ -3,7 +3,7 @@ import {TestBed, async, inject} from '@angular/core/testing';
 
 import {AgmMarker} from './../../directives/marker';
 import {GoogleMapsAPIWrapper} from './../google-maps-api-wrapper';
-import {Marker} from './../google-maps-types';
+import {Marker, MarkerLabel} from './../google-maps-types';
 import {MarkerManager} from './../managers/marker-manager';
 
 describe('MarkerManager', () => {
@@ -186,6 +186,68 @@ describe('MarkerManager', () => {
              newMarker.zIndex = zIndex;
              return markerManager.updateZIndex(newMarker).then(
                  () => { expect(markerInstance.setZIndex).toHaveBeenCalledWith(zIndex); });
+           })));
+  });
+
+  describe('set marker label', () => {
+    it('should allow string as label',
+       async(inject(
+           [MarkerManager, GoogleMapsAPIWrapper],
+           (markerManager: MarkerManager, apiWrapper: GoogleMapsAPIWrapper) => {
+             const newMarker = new AgmMarker(markerManager);
+             newMarker.latitude = 34.4;
+             newMarker.longitude = 22.3;
+
+             const markerInstance: Marker = jasmine.createSpyObj('Marker', ['setMap', 'setLabel']);
+             (<any>apiWrapper.createMarker).and.returnValue(Promise.resolve(markerInstance));
+
+             markerManager.addMarker(newMarker);
+             expect(apiWrapper.createMarker).toHaveBeenCalledWith({
+               position: {lat: 34.4, lng: 22.3},
+               label: undefined,
+               draggable: false,
+               icon: undefined,
+               opacity: 1,
+               visible: true,
+               zIndex: 1,
+               title: undefined
+             });
+             newMarker.label = 'A';
+             return markerManager.updateLabel(newMarker).then(
+                 () => { expect(markerInstance.setLabel).toHaveBeenCalledWith('A'); });
+           })));
+    it('should allow MarkerLabel object as label',
+       async(inject(
+           [MarkerManager, GoogleMapsAPIWrapper],
+           (markerManager: MarkerManager, apiWrapper: GoogleMapsAPIWrapper) => {
+             const newMarker = new AgmMarker(markerManager);
+             newMarker.latitude = 34.4;
+             newMarker.longitude = 22.3;
+
+             const markerInstance: Marker = jasmine.createSpyObj('Marker', ['setMap', 'setLabel']);
+             (<any>apiWrapper.createMarker).and.returnValue(Promise.resolve(markerInstance));
+
+             markerManager.addMarker(newMarker);
+             expect(apiWrapper.createMarker).toHaveBeenCalledWith({
+               position: {lat: 34.4, lng: 22.3},
+               label: undefined,
+               draggable: false,
+               icon: undefined,
+               opacity: 1,
+               visible: true,
+               zIndex: 1,
+               title: undefined
+             });
+             const label: MarkerLabel = <MarkerLabel>{
+                color: '#fff',
+                fontFamily: 'Wingdings',
+                fontSize: '16px',
+                fontWeight: '400',
+                text: 'A'
+             };
+             newMarker.label = label;
+             return markerManager.updateLabel(newMarker).then(
+                 () => { expect(markerInstance.setLabel).toHaveBeenCalledWith(label); });
            })));
   });
 });

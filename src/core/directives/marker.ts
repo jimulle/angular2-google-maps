@@ -58,9 +58,32 @@ export class AgmMarker implements OnDestroy, OnChanges, AfterContentInit {
   title: string;
 
   /**
-   * The label (a single uppercase character) for the marker.
+   * The label can be a single uppercase character (string) or a MarkerLabel object.
+   *
+   * ### Example
+   * ```html
+   * <agm-marker
+   *    [latitude]="lat"
+   *    [longitude]="lng"
+   *    [label]="'M'">
+   * </agm-marker>
+   *
+   * <agm-marker
+   *    [latitude]="lat"
+   *    [longitude]="lng"
+   *    [label]="{
+   *        color: '#fff',
+   *        fontFamily: 'Wingdings',
+   *        fontSize: '16px',
+   *        fontWeight: '400',
+   *        text: 'A'
+   *    }">
+   * </agm-marker>
+   * ```
+   *
+   * MarkerLabel Object specification:  https://developers.google.com/maps/documentation/javascript/reference#MarkerLabel
    */
-  label: string;
+  label: string | mapTypes.MarkerLabel;
 
   /**
    * If true, the marker can be dragged. Default value is false.
